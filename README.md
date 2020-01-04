@@ -13,5 +13,5 @@ Once you have `pipenv` and `pyenv` in your `PATH`, run the following command in 
 If prompted to install Cython3.7.1 using `pyenv`, press `<Enter>` (yes).
 
 To check that it is working, first activate the virtual environment with `pipenv shell`.
-Then run `pytest` in this directory.
+Then run `python -m pytest` in this directory.
 
