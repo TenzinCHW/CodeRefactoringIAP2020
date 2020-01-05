@@ -17,24 +17,24 @@ class IntcodeComputer:
     def try_exec(self):
         opcode = self.memory[self.pc]
         argmodes, op = opcode // 100, opcode % 100
-        ops = self.ops()
         if op == HALT_CODE:
             raise HaltException
-        if op in ops.keys():
-            self.exec(op, ops, argmodes)
+        if op in OPS:
+            self.exec(op, argmodes)
         else:
             raise InvalidOpException
 
-    def ops(self):
-        return {1 : (self.plus, 3),
-                2 : (self.mult, 3),
-                3 : (self.input, 1),
-                4 : (self.output, 1)}
-
-    def exec(self, op, ops, argmodes):
-        func, num_args = ops[op]
+    def exec(self, op, argmodes):
+        num_args = OPS_NUM_ARGS[op]
         args = self.memory[self.pc+1:self.pc+1+num_args]
-        func(*args, argmodes)
+        if op == 1:
+            self.two_arg_store(*args, argmodes, add)
+        elif op == 2:
+            self.two_arg_store(*args, argmodes, mult)
+        elif op == 3:
+            self.mem_store(*args, self.inp)
+        else: #4
+            self.out = self.mem_load(*args)
         self.pc += 1 + num_args
 
     def arg_values(self, argmodes, *args):
@@ -46,19 +46,9 @@ class IntcodeComputer:
                 decoded_args.append(arg)
         return decoded_args
 
-    def plus(self, a_loc, b_loc, loc, argmodes):
+    def two_arg_store(self, a_loc, b_loc, loc, argmodes, func):
         a, b = self.arg_values(argmodes, a_loc, b_loc)
-        self.mem_store(loc, a + b)
-
-    def mult(self, a_loc, b_loc, loc, argmodes):
-        a, b = self.arg_values(argmodes, a_loc, b_loc)
-        self.mem_store(loc, a * b)
-
-    def input(self, loc, argmode):
-        self.mem_store(loc, self.inp)
-
-    def output(self, loc, argmode):
-        self.out = self.mem_load(loc)
+        self.mem_store(loc, func(a, b))
 
     def mem_load(self, mem_loc):
         self.check_mem_inbound(mem_loc)
