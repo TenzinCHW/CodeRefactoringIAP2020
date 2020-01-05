@@ -1,3 +1,5 @@
+from src.ops2 import *
+
 class IntcodeComputer:
     def __init__(self, instructions):
         self.memory = instructions
@@ -5,7 +7,7 @@ class IntcodeComputer:
     def run(self):
         num_instructions = len(self.memory) // 4
         for i in range(num_instructions):
-            instruction = self.memory[i:i+4]
+            instruction = self.memory[i*4:(i+1)*4]
             try:
                 self.exec(instruction)
             except HaltException:
@@ -13,14 +15,13 @@ class IntcodeComputer:
         return self.memory
 
     def exec(self, instruction):
-        op, arg1_loc, arg2_loc, out_loc = instruction
-        arg1, arg2 = map(self.mem_load, (arg1_loc, arg2_loc))
-        if op == 1:
-            out = arg1 + arg2
-        elif op == 2:
-            out = arg1 * arg2
-        elif op == 99:
-            raise HaltException
+        op = instruction[0]
+        if op in ops.keys():
+            if op == HALT_CODE:
+                raise HaltException
+            arg1_loc, arg2_loc, out_loc = instruction[1:]
+            arg1, arg2 = map(self.mem_load, (arg1_loc, arg2_loc))
+            out = ops[op](arg1, arg2)
         else:
             raise InvalidOpException
         self.mem_store(out_loc, out)
@@ -30,10 +31,4 @@ class IntcodeComputer:
 
     def mem_store(self, mem_loc, value):
         self.memory[mem_loc] = value
-
-class HaltException(Exception):
-    pass
-
-class InvalidOpException(Exception):
-    pass
 
