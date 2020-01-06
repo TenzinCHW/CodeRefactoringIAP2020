@@ -69,7 +69,7 @@ class IntcodeComputer:
 
     def jump(self, a_loc, b_loc, argmodes, pc, jump_to):
         a, b = self.arg_values(argmodes, a_loc, b_loc)
-        return jump_to(a, b, pc)
+        return jump_to(a, b_loc, pc)
 
     def two_arg_store(self, a_loc, b_loc, loc, argmodes, func):
         a, b = self.arg_values(argmodes, a_loc, b_loc)
