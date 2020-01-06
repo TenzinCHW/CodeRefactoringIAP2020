@@ -1,4 +1,7 @@
-from src.ops2 import *
+try:
+    from src.ops2 import *
+except:
+    from ops2 import *
 
 class IntcodeComputer:
     def __init__(self, instructions):

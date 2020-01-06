@@ -1,5 +1,8 @@
 from copy import copy
-from src.ops5 import *
+try:
+    from src.ops5 import *
+except:
+    from ops5 import *
 
 class IntcodeComputer:
     def __init__(self, instructions):
