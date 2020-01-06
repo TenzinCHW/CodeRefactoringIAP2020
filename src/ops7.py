@@ -4,6 +4,9 @@ class HaltException(Exception):
 class InvalidOpException(Exception):
     pass
 
+class InvalidParameterModeException(Exception):
+    pass
+
 HALT_CODE = 99
 
 OPS_NUM_ARGS = {1 : 3,

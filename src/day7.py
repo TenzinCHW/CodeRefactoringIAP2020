@@ -1,14 +1,14 @@
 from copy import copy
 from itertools import permutations
-from src.ops7 import *
+try:
+    from src.ops7 import *
+except:
+    from ops7 import *
 
 class IntcodeComputer:
     def __init__(self, instructions):
-        self.instructions = copy(instructions)
         self.memory = copy(instructions)
-
-    def reinit(self):
-        self.memory = copy(self.instructions)
+        self.out = []
 
     def run(self, inp=None):
         self.inp = inp
@@ -45,7 +45,7 @@ class IntcodeComputer:
             inp_ptr += 1
             self.mem_store(*args, inp)
         elif op == 4:
-            self.out = self.mem_load(*args)
+            self.out.append(self.mem_load(*args))
         elif op == 5:
             pc = self.jump(*args, argmodes, pc, neq_zero)
         elif op == 6:
@@ -63,13 +63,15 @@ class IntcodeComputer:
             if argmode % 10 == 0:
                 value = self.mem_load(arg)
                 decoded_args.append(value)
-            else:
+            elif argmode % 10 == 1:
                 decoded_args.append(arg)
+            else:
+                raise InvalidParameterModeException
         return decoded_args
 
     def jump(self, a_loc, b_loc, argmodes, pc, jump_to):
         a, b = self.arg_values(argmodes, a_loc, b_loc)
-        return jump_to(a, b_loc, pc)
+        return jump_to(a, b, pc)
 
     def two_arg_store(self, a_loc, b_loc, loc, argmodes, func):
         a, b = self.arg_values(argmodes, a_loc, b_loc)
@@ -81,6 +83,7 @@ class IntcodeComputer:
 
     def mem_store(self, mem_loc, value):
         self.check_mem_inbound(mem_loc)
+        assert type(value) == int, 'value being stored must be an int'
         self.memory[mem_loc] = value
 
     def check_mem_inbound(self, mem_loc):
@@ -88,23 +91,31 @@ class IntcodeComputer:
             print('memory location {mem_loc} is out bounds')
 
 class AmplifierCircuit:
-    def __init__(self, num_thrusters, instructions):
+    def __init__(self, num_thrusters, instructions, start_settings=0):
         self.iccs = [IntcodeComputer(instructions)
                 for _ in range(num_thrusters)]
-        settings = ''.join(str(i) for i in range(num_thrusters))
+        self.instructions = copy(instructions)
+        settings = ''.join(str(i) for i in range(start_settings, start_settings + num_thrusters))
         self.possible_settings = permutations(settings)
+
+    def reinit_iccs(self):
+        self.iccs = [IntcodeComputer(self.instructions) for _ in self.iccs]
 
     def get_max_thruster_setting(self):
         max_thrust = 0  # TODO check if this is really the smallest
         for setting in self.possible_settings:
-            inp = 0
+            inp = [0]
             for i, icc in enumerate(self.iccs):
-                icc.run(inp=(int(setting[i]), inp))
+                icc.run(inp=(int(setting[i]), *inp))
                 inp = icc.out
-                icc.reinit()
 
-            if self.iccs[-1].out > max_thrust:
-                max_thrust = self.iccs[-1].out
+            # inp is now output of amp E
+            amp_out = inp[-1]
+            if amp_out > max_thrust:
+                max_thrust = amp_out
                 max_setting = int(''.join(setting))
+
+            # Reset memory of all computers
+            self.reinit_iccs()
         return max_thrust, max_setting
 

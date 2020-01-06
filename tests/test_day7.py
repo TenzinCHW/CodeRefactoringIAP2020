@@ -108,7 +108,7 @@ def actual_eq_expected(instructions, expected):
 
 def check_output(instructions, inp, expected_out):
     icc = run_instructions(instructions, inp=inp)
-    actual_out = icc.out
+    actual_out = icc.out[-1]
     assert actual_out == expected_out
 
 def run_instructions(instructions, inp=None):
