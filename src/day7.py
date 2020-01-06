@@ -59,8 +59,10 @@ class IntcodeComputer:
     def arg_values(self, argmodes, *args):
         decoded_args = []
         for i, arg in enumerate(args):
-            if (argmodes // 10 ** i) % (10 ** (i+1)) == 0:
-                decoded_args.append(self.mem_load(arg))
+            argmode = argmodes // 10 ** i
+            if argmode % 10 == 0:
+                value = self.mem_load(arg)
+                decoded_args.append(value)
             else:
                 decoded_args.append(arg)
         return decoded_args
