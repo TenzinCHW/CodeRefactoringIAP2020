@@ -71,12 +71,12 @@ def test_jmp_neq0():
     check_output(instructions, None, expected_out)
 
 def test_dont_jmp_eq0():
-    instructions = [1105,0,5,4,0,99]
+    instructions = [1105,0,6,4,0,99,4,1,99]
     expected_out = 1105
     check_output(instructions, None, expected_out)
 
 def test_dont_jmp_neq0():
-    instructions = [1106,1,5,4,0,99]
+    instructions = [1106,1,6,4,0,99,4,1,99]
     expected_out = 1106
     check_output(instructions, None, expected_out)
 
