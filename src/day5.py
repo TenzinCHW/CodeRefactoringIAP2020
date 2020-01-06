@@ -19,7 +19,7 @@ class IntcodeComputer:
         argmodes, op = opcode // 100, opcode % 100
         if op == HALT_CODE:
             raise HaltException
-        if op in OPS:
+        elif op in OPS:
             self.exec(op, argmodes)
         else:
             raise InvalidOpException
@@ -33,8 +33,16 @@ class IntcodeComputer:
             self.two_arg_store(*args, argmodes, mult)
         elif op == 3:
             self.mem_store(*args, self.inp)
-        else: #4
+        elif op == 4:
             self.out = self.mem_load(*args)
+        elif op == 5:
+            self.jump(*args, argmodes, neq_zero)
+        elif op == 6:
+            self.jump(*args, argmodes, eq_zero)
+        elif op == 7:
+            self.two_arg_store(*args, argmodes, lt)
+        elif op == 8:
+            self.two_arg_store(*args, argmodes, eq)
         self.pc += 1 + num_args
 
     def arg_values(self, argmodes, *args):
@@ -45,6 +53,10 @@ class IntcodeComputer:
             else:
                 decoded_args.append(arg)
         return decoded_args
+
+    def jump(self, a_loc, b_loc, argmodes, decision_func):
+        a, b = self.arg_values(argmodes, a_loc, b_loc)
+        self.pc = decision_func(a, b, self.pc)
 
     def two_arg_store(self, a_loc, b_loc, loc, argmodes, func):
         a, b = self.arg_values(argmodes, a_loc, b_loc)
