@@ -6,8 +6,6 @@ class InvalidOpException(Exception):
 
 HALT_CODE = 99
 
-OPS = (1, 2, 3, 4, 5, 6, 7, 8)
-
 OPS_NUM_ARGS = {1 : 3,
         2 : 3,
         3 : 1,
