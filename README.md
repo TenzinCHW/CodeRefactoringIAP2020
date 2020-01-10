@@ -7,7 +7,7 @@ The course aims to teach participants how to write readable, understandable and 
 The course will use questions from the Advent of Code 2019 as practise questions.
 
 ### Installation
-Install [pipenv](pipenv.kennethreitz.org/en/latest/install) and [pyenv](github.com/pyenv/pyenv-installer).
+Install [pipenv](https://pipenv.kennethreitz.org/en/latest/install) and [pyenv](https://github.com/pyenv/pyenv-installer).
 
 Once you have `pipenv` and `pyenv` in your `PATH`, run the following command in this repository to install the virtual environment.
 If prompted to install Cython3.7.1 using `pyenv`, press `<Enter>` (yes).
