@@ -10,7 +10,9 @@ class IntcodeComputer:
     def run(self):
         num_instructions = len(self.memory) // 4
         for i in range(num_instructions):
-            instruction = self.memory[i*4:(i+1)*4]
+            start = i * 4
+            end = (i+1) * 4
+            instruction = self.memory[start:end]
             try:
                 self.exec(instruction)
             except HaltException:
@@ -24,7 +26,8 @@ class IntcodeComputer:
                 raise HaltException
             arg1_loc, arg2_loc, out_loc = instruction[1:]
             arg1, arg2 = map(self.mem_load, (arg1_loc, arg2_loc))
-            out = ops[op](arg1, arg2)
+            operation = ops[op]
+            out = operation(arg1, arg2)
         else:
             raise InvalidOpException
         self.mem_store(out_loc, out)
